@@ -5,11 +5,23 @@ y: int = 0      #y座標
 z: int = 0      #z座標
 r: float = 0    #中心原子との距離
 
-#頂点の条件
+#頂点の条件 (1,1,1)
 is_vertex = (
-    abs(x) == outermost and
-    abs(y) == outermost and
-    abs(z) == outermost
+    x == outermost and
+    y == outermost and
+    z == outermost
+)
+#本来の立方体における辺の中心 (1,1,0), (0,1,1), (1,0,1)
+is_vertex_on_edge = (
+    (x == outermost and y == outermost and z == 0) or
+    (x == outermost and z == outermost and y == 0) or
+    (y == outermost and z == outermost and x == 0)
+)
+#軸上の頂点　（本来の立方体における面の中心) (1,0,0), (0,1,0), (0,0,1)
+is_vertex_on_axis = (
+    (x == outermost and y == 0 and z == 0) or
+    (y == outermost and x == 0 and z == 0) or
+    (z == outermost and x == 0 and y == 0)
 )
 #辺の条件
 is_edge = (
@@ -25,21 +37,21 @@ is_face = (
 )
 #内部の条件
 is_inside = (
-    abs(x) != outermost and
-    abs(y) != outermost and
-    abs(z) != outermost
+    x != outermost and
+    y != outermost and
+    z != outermost
 )
 
-for x in range(-outermost, outermost + 1):
-    for y in range(-outermost, outermost + 1):
-        for z in range(-outermost, outermost + 1):
+for x in range(0, outermost + 1):
+    for y in range(0, outermost + 1):
+        for z in range(0, outermost + 1):
             if x == y == z == 0: 
                 #中心は計算しない
                 continue
             r = (x**2 + y**2 + z**2) ** 0.5
             if (x + y + z) % 2 == 0:
                 r *= -1
-            if is_vertex:
+            if is_vertex or is_vertex_on_edge or is_vertex_on_axis:
                 #立方体の頂点
                 contribution: float = 0.125
             if is_edge:
@@ -54,4 +66,6 @@ for x in range(-outermost, outermost + 1):
             
             m.append(contribution / r)
 
-print(sum(m))
+M = map(lambda x: x*4, m)
+rest = sum(M)
+print(rest)

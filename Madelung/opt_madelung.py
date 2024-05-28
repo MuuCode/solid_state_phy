@@ -25,15 +25,15 @@ is_vertex_on_axis = (
 )
 #辺の条件
 is_edge = (
-    (abs(x) == outermost and abs(y) == outermost) or
-    (abs(x) == outermost and abs(z) == outermost) or
-    (abs(y) == outermost and abs(z) == outermost)
+    (x == outermost and y == outermost) or
+    (x == outermost and z == outermost) or
+    (y == outermost and z == outermost)
 )
 #面の条件
 is_face = (
-    (abs(x) == outermost) or
-    (abs(y) == outermost) or
-    (abs(z) == outermost)
+    (x == outermost) or
+    (y == outermost) or
+    (z == outermost)
 )
 #内部の条件
 is_inside = (
@@ -51,21 +51,22 @@ for x in range(0, outermost + 1):
             r = (x**2 + y**2 + z**2) ** 0.5
             if (x + y + z) % 2 == 0:
                 r *= -1
-            if is_vertex or is_vertex_on_edge or is_vertex_on_axis:
-                #立方体の頂点
-                contribution: float = 0.125
             if is_edge:
                 #立方体の辺
                 contribution = 0.25
-            if is_edge:
+            if is_face:
                 #立方体の面
                 contribution = 0.5
+            if is_vertex or is_vertex_on_edge or is_vertex_on_axis:
+                #立方体の頂点 (is_edge と is_faceに含まれるのでこの順番にする)
+                contribution: float = 0.125
             if is_inside:
                 #内殻
                 contribution = 1.0
             
             m.append(contribution / r)
 
-M = map(lambda x: x*4, m)
+M = map(lambda x: x*8, m)
 rest = sum(M)
 print(rest)
+print(m)

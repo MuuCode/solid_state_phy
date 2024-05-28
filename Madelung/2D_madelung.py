@@ -21,7 +21,6 @@ for x in range(-outermost, outermost + 1):
       if abs(x) != outermost and abs(y) != outermost:
          #内殻
          contribution = 1.0
-      
       m.append(contribution / r)
 
 
